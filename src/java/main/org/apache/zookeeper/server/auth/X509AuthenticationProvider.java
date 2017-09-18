@@ -45,6 +45,9 @@ import org.slf4j.LoggerFactory;
  * <br/>To specify store passwords, set the following system properties:
  * <br/><code>zookeeper.ssl.keyStore.password</code>
  * <br/><code>zookeeper.ssl.trustStore.password</code>
+ * <br/>To specify store types, set the following system properties:
+ * <br/><code>zookeeper.ssl.keyStore.type</code>
+ * <br/><code>zookeeper.ssl.trustStore.type</code>
  * <br/>Alternatively, this can be plugged with any X509TrustManager and
  * X509KeyManager implementation.
  */
@@ -63,18 +66,22 @@ public class X509AuthenticationProvider implements AuthenticationProvider {
      * <br/><code>zookeeper.ssl.trustStore.location</code>
      * <br/><code>zookeeper.ssl.keyStore.password</code>
      * <br/><code>zookeeper.ssl.trustStore.password</code>
+     * <br/><code>zookeeper.ssl.keyStore.type</code>
+     * <br/><code>zookeeper.ssl.trustStore.type</code>
      */
     public X509AuthenticationProvider() {
         String keyStoreLocationProp = System.getProperty(
                 ZKConfig.SSL_KEYSTORE_LOCATION);
         String keyStorePasswordProp = System.getProperty(
                 ZKConfig.SSL_KEYSTORE_PASSWD);
+        String keyStoreTypeProp = System.getProperty(
+                ZKConfig.SSL_KEYSTORE_TYPE);
 
         X509KeyManager km = null;
         X509TrustManager tm = null;
         try {
             km = X509Util.createKeyManager(
-                    keyStoreLocationProp, keyStorePasswordProp);
+                    keyStoreLocationProp, keyStorePasswordProp, KeyStoreTypeProp);
         } catch (KeyManagerException e) {
             LOG.error("Failed to create key manager", e);
         }
@@ -83,10 +90,12 @@ public class X509AuthenticationProvider implements AuthenticationProvider {
                 ZKConfig.SSL_TRUSTSTORE_LOCATION);
         String trustStorePasswordProp = System.getProperty(
                 ZKConfig.SSL_TRUSTSTORE_PASSWD);
+        String trustStoreTypeProp = System.getProperty(
+                ZKConfig.SSL_TRUSTSTORE_TYPE);
 
         try {
             tm = X509Util.createTrustManager(
-                    trustStoreLocationProp, trustStorePasswordProp);
+                    trustStoreLocationProp, trustStorePasswordProp, trustStoreTypeProp);
         } catch (TrustManagerException e) {
             LOG.error("Failed to create trust manager", e);
         }

@@ -47,9 +47,13 @@ public class ZKConfig {
     @SuppressWarnings("deprecation")
     public static final String SSL_KEYSTORE_PASSWD = X509Util.SSL_KEYSTORE_PASSWD;
     @SuppressWarnings("deprecation")
+    public static final String SSL_KEYSTORE_TYPE = X509Util.SSL_KEYSTORE_TYPE;
+    @SuppressWarnings("deprecation")
     public static final String SSL_TRUSTSTORE_LOCATION = X509Util.SSL_TRUSTSTORE_LOCATION;
     @SuppressWarnings("deprecation")
     public static final String SSL_TRUSTSTORE_PASSWD = X509Util.SSL_TRUSTSTORE_PASSWD;
+    @SuppressWarnings("deprecation")
+    public static final String SSL_TRUSTSTORE_TYPE = X509Util.SSL_TRUSTSTORE_TYPE;
     @SuppressWarnings("deprecation")
     public static final String SSL_AUTHPROVIDER = X509Util.SSL_AUTHPROVIDER;
     public static final String JUTE_MAXBUFFER = "jute.maxbuffer";
@@ -109,8 +113,10 @@ public class ZKConfig {
     protected void handleBackwardCompatibility() {
         properties.put(SSL_KEYSTORE_LOCATION, System.getProperty(SSL_KEYSTORE_LOCATION));
         properties.put(SSL_KEYSTORE_PASSWD, System.getProperty(SSL_KEYSTORE_PASSWD));
+        properties.put(SSL_KEYSTORE_TYPE, System.getProperty(SSL_KEYSTORE_TYPE, "JKS"));
         properties.put(SSL_TRUSTSTORE_LOCATION, System.getProperty(SSL_TRUSTSTORE_LOCATION));
         properties.put(SSL_TRUSTSTORE_PASSWD, System.getProperty(SSL_TRUSTSTORE_PASSWD));
+        properties.put(SSL_TRUSTSTORE_TYPE, System.getProperty(SSL_TRUSTSTORE_TYPE, "JKS"));
         properties.put(SSL_AUTHPROVIDER, System.getProperty(SSL_AUTHPROVIDER));
         properties.put(JUTE_MAXBUFFER, System.getProperty(JUTE_MAXBUFFER));
         properties.put(KINIT_COMMAND, System.getProperty(KINIT_COMMAND));
@@ -154,7 +160,7 @@ public class ZKConfig {
      * key can not be <code>null</code>. If key is already mapped then the old
      * value of the <code>key</code> is replaced by the specified
      * <code>value</code>.
-     * 
+     *
      * @param key
      * @param value
      */
@@ -226,7 +232,7 @@ public class ZKConfig {
     /**
      * Get the value of the <code>key</code> property as an <code>int</code>. If
      * property is not set, the provided <code>defaultValue</code> is returned
-     * 
+     *
      * @param key
      *            property key.
      * @param defaultValue
