@@ -59,6 +59,11 @@ public class X509Util {
      * @deprecated Use {@link ZKConfig#SSL_TRUSTSTORE_LOCATION}
      *             instead.
      */
+    public static final String SSL_KEYSTORE_TYPE = "zookeeper.ssl.keyStore.type";
+    /**
+     * @deprecated Use {@link ZKConfig#SSL_TRUSTSTORE_TYPE}
+     *             instead.
+     */
     @Deprecated
     public static final String SSL_TRUSTSTORE_LOCATION = "zookeeper.ssl.trustStore.location";
     /**
@@ -67,6 +72,12 @@ public class X509Util {
      */
     @Deprecated
     public static final String SSL_TRUSTSTORE_PASSWD = "zookeeper.ssl.trustStore.password";
+    /**
+     * @deprecated Use {@link ZKConfig#SSL_AUTHPROVIDER}
+     *             instead.
+     */
+    @Deprecated
+    public static final String SSL_TRUSTSTORE_TYPE = "zookeeper.ssl.trustStore.type";
     /**
      * @deprecated Use {@link ZKConfig#SSL_AUTHPROVIDER}
      *             instead.
@@ -90,6 +101,7 @@ public class X509Util {
 
         String keyStoreLocationProp = config.getProperty(ZKConfig.SSL_KEYSTORE_LOCATION);
         String keyStorePasswordProp = config.getProperty(ZKConfig.SSL_KEYSTORE_PASSWD);
+        String keyStoreTypeProp = config.getProperty(ZKConfig.SSL_KEYSTORE_TYPE, "JKS");
 
         // There are legal states in some use cases for null KeyManager or TrustManager.
         // But if a user wanna specify one, location and password are required.
@@ -105,7 +117,7 @@ public class X509Util {
             }
             try {
                 keyManagers = new KeyManager[]{
-                        createKeyManager(keyStoreLocationProp, keyStorePasswordProp)};
+		      createKeyManager(keyStoreLocationProp, keyStorePasswordProp, keyStoreTypeProp)};
             } catch (KeyManagerException e) {
                 throw new SSLContextException("Failed to create KeyManager", e);
             }
@@ -113,6 +125,7 @@ public class X509Util {
 
         String trustStoreLocationProp = config.getProperty(ZKConfig.SSL_TRUSTSTORE_LOCATION);
         String trustStorePasswordProp = config.getProperty(ZKConfig.SSL_TRUSTSTORE_PASSWD);
+        String trustStoreTypeProp = config.getProperty(ZKConfig.SSL_TRUSTSTORE_TYPE, "JKS");
 
         if (trustStoreLocationProp == null && trustStorePasswordProp == null) {
             LOG.warn("Truststore not specified for client connection");
@@ -125,7 +138,7 @@ public class X509Util {
             }
             try {
                 trustManagers = new TrustManager[]{
-                        createTrustManager(trustStoreLocationProp, trustStorePasswordProp)};
+                        createTrustManager(trustStoreLocationProp, trustStorePasswordProp, trustStoreTypeProp)};
             } catch (TrustManagerException e) {
                 throw new SSLContextException("Failed to create TrustManager", e);
             }
@@ -141,13 +154,13 @@ public class X509Util {
         return sslContext;
     }
 
-    public static X509KeyManager createKeyManager(String keyStoreLocation, String keyStorePassword)
+    public static X509KeyManager createKeyManager(String keyStoreLocation, String keyStorePassword, String keyStoreType)
             throws KeyManagerException {
         FileInputStream inputStream = null;
         try {
             char[] keyStorePasswordChars = keyStorePassword.toCharArray();
             File keyStoreFile = new File(keyStoreLocation);
-            KeyStore ks = KeyStore.getInstance("JKS");
+            KeyStore ks = KeyStore.getInstance(keyStoreType);
             inputStream = new FileInputStream(keyStoreFile);
             ks.load(inputStream, keyStorePasswordChars);
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
@@ -171,13 +184,13 @@ public class X509Util {
         }
     }
 
-    public static X509TrustManager createTrustManager(String trustStoreLocation, String trustStorePassword)
+    public static X509TrustManager createTrustManager(String trustStoreLocation, String trustStorePassword, String trustStoreType)
             throws TrustManagerException {
         FileInputStream inputStream = null;
         try {
             char[] trustStorePasswordChars = trustStorePassword.toCharArray();
             File trustStoreFile = new File(trustStoreLocation);
-            KeyStore ts = KeyStore.getInstance("JKS");
+            KeyStore ts = KeyStore.getInstance(trustStoreType);
             inputStream = new FileInputStream(trustStoreFile);
             ts.load(inputStream, trustStorePasswordChars);
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
