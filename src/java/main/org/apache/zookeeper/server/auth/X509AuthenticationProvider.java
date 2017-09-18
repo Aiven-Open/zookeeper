@@ -81,7 +81,7 @@ public class X509AuthenticationProvider implements AuthenticationProvider {
         X509TrustManager tm = null;
         try {
             km = X509Util.createKeyManager(
-                    keyStoreLocationProp, keyStorePasswordProp, KeyStoreTypeProp);
+                    keyStoreLocationProp, keyStorePasswordProp, keyStoreTypeProp);
         } catch (KeyManagerException e) {
             LOG.error("Failed to create key manager", e);
         }
